@@ -57,9 +57,9 @@ drop_G_y = ['EDAD','GRUPO DE EDAD','SEXO']
 
 
 app = Dash(__name__)
-
+#'#111111'
 colors = {
-    'background': '#111111',
+    'background':'white',
     'text': '#7FDBFF'
 }
 
@@ -89,7 +89,7 @@ colors = {
 app.layout = html.Div(style={'backgroundColor': colors['background']}, children=[
 
         html.H1(
-        children='ANÁLISIS ESTADÍSTICO DEL COMPORTAMIENTO COVID-19 EN PANAMÁ',
+        children='VISUALIZACIÓN DEL COMPORTAMIENTO COVID-19 EN PANAMÁ',
         style={
             'textAlign': 'center',
             'color': colors['text']
@@ -132,7 +132,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
 
 
 
-    html.Div(children='The kingdom of Heaven is a condition of the heart, not something that comes upon the earth or after death', style={
+    html.Div(children='Grupo de Investigación en Tecnologías Avanzadas de Telecomunicación y Procesamiento de Señales', style={
         'textAlign': 'center',
         'color': colors['text']
     }),
@@ -189,7 +189,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
     Input('xaxis-column', 'value'),
     Input('yaxis-column', 'value'))
 
-def update_graph(xaxis_column_n,yaxis_colum_n):
+def update_graph1(xaxis_column_n, yaxis_colum_n):
 
     datos = variables(df2[xaxis_column_n],df2[yaxis_colum_n])     
     # print(variables(xaxis_column_n,yaxis_colum_n))
@@ -208,21 +208,21 @@ def update_graph(xaxis_column_n,yaxis_colum_n):
 
     fig.add_layout_image(
         dict(
-            source="https://okdiario.com/img/2017/03/29/aguila-calva-datos-interesantes-a-620x349.jpg",
+            source="http://gitts.utp.ac.pa/wp-content/uploads/2021/08/Update-Logo-GITTS.png",
             xref="paper", yref="paper",
-            x=1, y=1.05,
-            sizex=0.9, sizey=0.8,
+            x=10, y=10,
+            sizex=20, sizey=20,
             xanchor="right", yanchor="bottom"
         )
     )
 
-    fig.update_layout(
-        plot_bgcolor=colors['background'],
-        paper_bgcolor=colors['background'],
-        font_color=colors['text']
-    )
+    # fig.update_layout(
+    #     plot_bgcolor=colors['background'],
+    #     paper_bgcolor=colors['background'],
+    #     font_color=colors['text']
+    # )
     
-    fig.update_traces(marker_size=15)
+    fig.update_traces(marker_size=14)
 
     fig.update_yaxes(title = 'NUMERO DE CASOS')
 
@@ -240,7 +240,7 @@ def update_graph(xaxis_column_n,yaxis_colum_n):
     Input('xaxis-column-g', 'value'),
     Input('yaxis-column-g', 'value'))
 
-def update_graph(xaxis_column_g,yaxis_colum_g):
+def update_graph2(xaxis_column_g, yaxis_colum_g):
 
     datos = variables(df2[xaxis_column_g],df2[yaxis_colum_g])
 
@@ -264,18 +264,11 @@ def update_graph(xaxis_column_g,yaxis_colum_g):
                         size_max=75
                         )
 
-
-
-
     return fig
 
 
 
 if __name__ == '__main__':
-
-
-
-
 
     app.run_server(debug=True)
 
