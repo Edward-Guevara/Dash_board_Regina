@@ -20,9 +20,11 @@ df2 = pd.read_csv('https://raw.githubusercontent.com/Yugen02/Dash_board_Regina/E
 # del df2["Unnamed: 0"]
 
 df2['DATE'] = pd.to_datetime(df2['FIS'], errors='coerce')
-
+df2['AÑO'] = df2['DATE'].dt.year
 df2['MES'] = df2['DATE'].dt.month_name()
+df2['MES'] = ['{}-{}'.format(df2['MES'][i], df2['AÑO'][i]) for i in range(len(df2['MES']))]
 df2['SEMANA'] = df2['DATE'].dt.isocalendar().week
+df2['SEMANA'] = ['{}-{}'.format(df2['SEMANA'][i], df2['MES'][i]) for i in range(len(df2['SEMANA']))]
 
 
 def variables(variable_x, variable_y):
@@ -48,42 +50,22 @@ def variables(variable_x, variable_y):
 
 
 
-## LISTA DE DROP DOWN
+# LISTA DE DROP DOWN
 
-drop_D = ['TIPO DE PACIENTE','EDAD','GRUPO DE EDAD','SEXO','REGION','DISTRITO','MES','SEMANA']
-
-drop_G_x = ['REGION','DISTRITO']
-drop_G_y = ['EDAD','GRUPO DE EDAD','SEXO']
+drop_G_x = ['SEMANA','MES']
+drop_G_y = ['GRUPO DE EDAD','SEXO','REGION']
 
 
 app = Dash(__name__)
-#'#111111'
+
+
+
 colors = {
     'background':'white',
     'text': '#7FDBFF'
 }
 
-# datos = variables(df2['REGION'],df2['SEXO'])
 
-
-# lat = [9.4165,9.4165, 8.3971129,8.3971129,8.4604873,8.4604873,9.3553005,9.3553005,8.2158991,8.2158991,9.057822904338451,9.057822904338451,7.8432774,7.8432774,7.8773471,7.8773471,8.999729497842978,8.999729497842978,8.48621,8.48621,9.0329592,9.0329592,9.078862,9.078862,8.9898564,8.9898564,9.0551061,9.0551061,8.2414131,8.2414131]
-# lon= [-82.5207,-82.5207,-82.3223443,-82.3223443,-80.4305652,-80.4305652,-79.8974085,-79.8974085,-78.0172551,-78.0172551,-77.89447750948364,-77.89447750948364,-80.7587705,-80.7587705,-80.4290617,-80.4290617,-79.51171356618619,-79.51171356618619,-81.73081,-81.73081,-79.4710178,-79.4710178,-79.4719702,-79.4719702,-79.6793267,-79.6793267,-79.4933063,-79.4933063,8.2414131,8.2414131]
-
-# datos.insert(3, "Longitud", lon, True)
-# datos.insert(4, "Latitud", lat, True)
-# # print(datos)
-
-# px.set_mapbox_access_token('pk.eyJ1IjoieXVnZW4wMiIsImEiOiJjbGFnMHJiY3AwdWlrM25vOXRwMG1uaHA1In0.6nnPpOKyl5QsmfGBNcb75Q')
-
-# fig2 = px.scatter_mapbox(datos,
-#                         lon = datos['Longitud'],
-#                         lat = datos['Latitud'],
-#                         zoom = 5,
-#                         hover_name=datos['y'],
-#                         color = datos['x'],
-#                         size = datos['Casos'],
-#                         size_max=75
-#                         )
 
 
 app.layout = html.Div(style={'backgroundColor': colors['background']}, children=[
@@ -101,8 +83,8 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
         
         html.Div([
             dcc.Dropdown(
-                sorted(drop_D),
-                'GRUPO DE EDAD',
+                sorted(drop_G_x),
+                'SEMANA',
                 id='xaxis-column',
                 style={
                 'textAlign': 'center',
@@ -114,8 +96,8 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
 
         html.Div([
             dcc.Dropdown(
-                sorted(drop_D),
-                'SEXO',
+                sorted(drop_G_y),
+                'REGION',
                 id='yaxis-column',
                 style={
                 'textAlign': 'center',
@@ -146,7 +128,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
         
         html.Div([
             dcc.Dropdown(
-                sorted(drop_G_x),
+                sorted(['REGION']),
                 'REGION',
                 id='xaxis-column-g',
                 style={
@@ -159,7 +141,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
 
         html.Div([
             dcc.Dropdown(
-                sorted(drop_G_y),
+                sorted(['SEXO']),
                 'SEXO',
                 id='yaxis-column-g',
                 style={
@@ -192,17 +174,14 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
 def update_graph1(xaxis_column_n, yaxis_colum_n):
 
     datos = variables(df2[xaxis_column_n],df2[yaxis_colum_n])     
-    # print(variables(xaxis_column_n,yaxis_colum_n))
-
-    # dff = df[df['Region'] == xaxis_column_n]
-
+ 
     fig = px.scatter(datos, x=datos['x'],
-                     y=datos['Casos'],
-                     hover_name=datos['y'],
-                     color=datos['y'], 
-                     size_max=100,
-                     labels = {'x':xaxis_column_n,'y':yaxis_colum_n,'color':yaxis_colum_n,'hover_name':'Corregimiento'}
-                     )
+                      y=datos['Casos'],
+                      hover_name=datos['y'],
+                      color=datos['y'], 
+                      size_max=100,
+                      labels = {'x':xaxis_column_n,'y':yaxis_colum_n,'color':yaxis_colum_n,'hover_name':'Corregimiento'}
+                      )
 
 
 
@@ -210,8 +189,8 @@ def update_graph1(xaxis_column_n, yaxis_colum_n):
         dict(
             source="http://gitts.utp.ac.pa/wp-content/uploads/2021/08/Update-Logo-GITTS.png",
             xref="paper", yref="paper",
-            x=10, y=10,
-            sizex=20, sizey=20,
+            x=1.05, y=1.05,
+            sizex=100, sizey=100,
             xanchor="right", yanchor="bottom"
         )
     )
@@ -224,7 +203,7 @@ def update_graph1(xaxis_column_n, yaxis_colum_n):
     
     fig.update_traces(marker_size=14)
 
-    fig.update_yaxes(title = 'NUMERO DE CASOS')
+    fig.update_yaxes(title = 'CASOS')
 
     fig.update_xaxes(title = xaxis_column_n)
 
